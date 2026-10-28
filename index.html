@@ -206,9 +206,11 @@ async function readTemplate(){
   await page.render({canvasContext:c.getContext('2d'),viewport:vp}).promise;
   templateImage=c;
   const fromForm=layoutFromFormFields(await page.getAnnotations(),page.getViewport({scale:1}));
-  autoLayout=fromForm||DEFAULT_LAYOUT;
+  autoLayout={...(fromForm||DEFAULT_LAYOUT),base:fromForm?'form':'default'};
   $('layoutHint').textContent=(fromForm?'Posiciones tomadas de los campos del formulario S-89. ':'La plantilla no tiene campos de formulario: se usan posiciones aproximadas. ')+'Valores en % del ancho (X) y del alto (Y). Los cambios quedan guardados en este dispositivo.';
-  if(!load('layout',null))layout=clone(autoLayout);
+  // Un ajuste guardado solo vale para el mismo tipo de plantilla.
+  const saved=load('layout',null);
+  layout=saved&&saved.base===autoLayout.base?saved:clone(autoLayout);
   renderLayoutTable();
   $('previewHint').textContent='Plantilla S-89 cargada'+(fromForm?' (con campos de formulario detectados)':'')+'. Generá una vista previa desde una asignación.';
 }
@@ -232,7 +234,7 @@ function detectAssignments(silent){
     found=detectFromPlainText(text);
   }
   if(!found.length){if(!silent)alert('No detecté asignaciones. Podés agregarlas a mano con “+ Agregar participante”.');return}
-  rows=found.map(f=>({name:f.name,helper:f.helper,num:f.num,title:f.title,week:f.week||null,autoDate:true,date:dateFor(f.week),place:'Sala principal'}));
+  rows=found.map(f=>({name:f.name,helper:f.helper,num:f.num,title:f.title,week:f.week||null,autoDate:true,date:dateFor(f.week)}));
   renderRows();
   const missing=rows.filter(r=>!r.name).length;
   $('previewHint').textContent='Se detectaron '+rows.length+' asignaciones'+(missing?' ('+missing+' sin nombre: completalas)':'')+'. Verificá antes de generar.';
@@ -240,9 +242,8 @@ function detectAssignments(silent){
 
 /* ---------- Filas ---------- */
 
-function addRow(){rows.push({name:'',helper:'',num:4,title:'',week:null,autoDate:false,date:$('meetingDate').value||'',place:'Sala principal'});renderRows()}
+function addRow(){rows.push({name:'',helper:'',num:4,title:'',week:null,autoDate:false,date:$('meetingDate').value||''});renderRows()}
 function escapeHtml(s){return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
-const PLACES=['Sala principal','Sala auxiliar núm. 1','Sala auxiliar núm. 2'];
 
 function renderRows(){
   const root=$('assignments');root.innerHTML='';let lastWeek=null;
@@ -250,7 +251,7 @@ function renderRows(){
     const wl=r.week?r.week.label:'Sin semana';
     if(wl!==lastWeek){const h=document.createElement('h3');h.className='week';h.textContent='Semana '+wl;root.appendChild(h);lastWeek=wl}
     const div=document.createElement('div');div.className='assignment'+(r.name?'':' missing');
-    div.innerHTML=`<h3>${escapeHtml(r.title||'Asignación')} <span class="muted">— intervención ${escapeHtml(r.num)}</span></h3><div class="grid"><div><label>Estudiante</label><input data-i="${i}" data-k="name" value="${escapeHtml(r.name)}" placeholder="Nombre y apellido"></div><div><label>Ayudante</label><input data-i="${i}" data-k="helper" value="${escapeHtml(r.helper)}" placeholder="Si corresponde"></div><div><label>Fecha</label><input data-i="${i}" data-k="date" value="${escapeHtml(r.date)}" placeholder="DD/MM/AAAA"></div><div><label>N.º de intervención</label><input data-i="${i}" data-k="num" type="number" inputmode="numeric" min="1" max="99" value="${escapeHtml(r.num)}"></div><div style="grid-column:1/-1"><label>Asignación (referencia, no se imprime)</label><input data-i="${i}" data-k="title" value="${escapeHtml(r.title)}" placeholder="Ej.: Lectura de la Biblia: Jeremías 50:24-40"></div><div><label>Se presentará en</label><select data-i="${i}" data-k="place">${PLACES.map(p=>`<option ${r.place===p?'selected':''}>${p}</option>`).join('')}</select></div></div><div class="actions"><button class="secondary" data-action="preview" data-i="${i}">Vista previa</button><button data-action="download" data-i="${i}">Generar / guardar PNG</button><button class="secondary" data-action="remove" data-i="${i}">Eliminar</button></div>`;
+    div.innerHTML=`<h3>${escapeHtml(r.title||'Asignación')} <span class="muted">— intervención ${escapeHtml(r.num)}</span></h3><div class="grid"><div><label>Estudiante</label><input data-i="${i}" data-k="name" value="${escapeHtml(r.name)}" placeholder="Nombre y apellido"></div><div><label>Ayudante</label><input data-i="${i}" data-k="helper" value="${escapeHtml(r.helper)}" placeholder="Si corresponde"></div><div><label>Fecha</label><input data-i="${i}" data-k="date" value="${escapeHtml(r.date)}" placeholder="DD/MM/AAAA"></div><div><label>N.º de intervención</label><input data-i="${i}" data-k="num" type="number" inputmode="numeric" min="1" max="99" value="${escapeHtml(r.num)}"></div><div style="grid-column:1/-1"><label>Asignación (referencia, no se imprime)</label><input data-i="${i}" data-k="title" value="${escapeHtml(r.title)}" placeholder="Ej.: Lectura de la Biblia: Jeremías 50:24-40"></div></div><div class="actions"><button class="secondary" data-action="preview" data-i="${i}">Vista previa</button><button data-action="download" data-i="${i}">Generar / guardar PNG</button><button class="secondary" data-action="remove" data-i="${i}">Eliminar</button></div>`;
     root.appendChild(div);
   });
   root.querySelectorAll('[data-i][data-k]').forEach(el=>el.addEventListener('input',e=>{const r=rows[+e.target.dataset.i],k=e.target.dataset.k;r[k]=e.target.value;if(k==='date')r.autoDate=false;if(k==='name')e.target.closest('.assignment').classList.toggle('missing',!r.name)}));
@@ -261,10 +262,9 @@ $('meetingDay').onchange=refreshDates;$('year').oninput=refreshDates;
 
 /* ---------- Posiciones sobre la hoja ---------- */
 
-// x/y en fracción del ancho/alto. Texto: x = inicio, y = línea base. Casillas: centro de la casilla.
-const DEFAULT_LAYOUT={font:16/360,name:{x:91/360,y:74/480},helper:{x:113/360,y:106/480},date:{x:83/360,y:139/480},num:{x:190/360,y:173/480},
-  check0:{x:43/360,y:254/480},check1:{x:43/360,y:272/480},check2:{x:43/360,y:290/480},cover:true};
-const FIELDS=[['name','Nombre'],['helper','Ayudante'],['date','Fecha'],['num','Intervención núm.'],['check0','Casilla sala principal'],['check1','Casilla auxiliar 1'],['check2','Casilla auxiliar 2']];
+// x/y en fracción del ancho/alto: x = inicio del texto, y = línea base. La X de la sala queda la que trae la plantilla.
+const DEFAULT_LAYOUT={font:16/360,name:{x:91/360,y:74/480},helper:{x:113/360,y:106/480},date:{x:83/360,y:139/480},num:{x:190/360,y:173/480},cover:true};
+const FIELDS=[['name','Nombre'],['helper','Ayudante'],['date','Fecha'],['num','Intervención núm.']];
 const clone=o=>JSON.parse(JSON.stringify(o));
 let autoLayout=DEFAULT_LAYOUT,layout=load('layout',null)||clone(DEFAULT_LAYOUT);
 
@@ -273,11 +273,9 @@ function layoutFromFormFields(annots,vp){
   const W=vp.width,H=vp.height,widgets=annots.filter(a=>a.subtype==='Widget'&&a.rect);
   const box=a=>({x0:a.rect[0]/W,x1:a.rect[2]/W,top:(H-a.rect[3])/H,bot:(H-a.rect[1])/H});
   const texts=widgets.filter(a=>a.fieldType==='Tx').map(box).sort((a,b)=>a.top-b.top||a.x0-b.x0);
-  const checks=widgets.filter(a=>a.fieldType==='Btn'&&(a.checkBox||a.radioButton)).map(box).sort((a,b)=>a.top-b.top||a.x0-b.x0);
   if(texts.length<4)return null;
-  const t=b=>({x:b.x0+.006,y:b.bot-(b.bot-b.top)*.22});
+  const t=b=>({x:b.x0+.008,y:b.bot-(b.bot-b.top)*.14});
   const L={font:Math.min(DEFAULT_LAYOUT.font,(texts[0].bot-texts[0].top)*H/W*.72),name:t(texts[0]),helper:t(texts[1]),date:t(texts[2]),num:t(texts[3]),cover:false};
-  for(let k=0;k<3;k++){const c=checks[k];L['check'+k]=c?{x:(c.x0+c.x1)/2,y:(c.top+c.bot)/2}:clone(DEFAULT_LAYOUT['check'+k])}
   return L;
 }
 
@@ -307,9 +305,6 @@ function renderCanvas(r){
   if(L.cover){ctx.fillStyle='#fff';fields.forEach(([k,v])=>{if(v)ctx.fillRect(L[k].x*W,L[k].y*H-size*1.05,Math.min(W*.97-L[k].x*W,ctx.measureText(v).width+size*12),size*1.3)})}
   ctx.fillStyle='#111';ctx.textBaseline='alphabetic';
   fields.forEach(([k,v])=>{if(v)fitText(ctx,v,L[k].x*W,L[k].y*H,size,W*.96-L[k].x*W)});
-  const p=L['check'+Math.max(0,PLACES.indexOf(r.place))],cx=p.x*W,cy=p.y*H,h=size*.42;
-  ctx.strokeStyle='#111';ctx.lineWidth=Math.max(2,size*.13);ctx.lineCap='round';
-  ctx.beginPath();ctx.moveTo(cx-h,cy-h);ctx.lineTo(cx+h,cy+h);ctx.moveTo(cx+h,cy-h);ctx.lineTo(cx-h,cy+h);ctx.stroke();
   return c;
 }
 
