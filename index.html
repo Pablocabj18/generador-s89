@@ -3,41 +3,365 @@
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#152b4a">
+<meta name="apple-mobile-web-app-capable" content="yes">
 <title>Generador de hojas S-89</title>
 <style>
-:root{font-family:system-ui,-apple-system,Segoe UI,sans-serif;color:#18212f;background:#f4f6fa}*{box-sizing:border-box}body{margin:0}header{background:#152b4a;color:#fff;padding:22px 18px}header h1{margin:0 0 6px;font-size:1.35rem}header p{margin:0;color:#dce6f5;font-size:.94rem}main{max-width:980px;margin:20px auto;padding:0 14px 40px}.card{background:white;border:1px solid #dce2ec;border-radius:15px;padding:18px;margin-bottom:14px;box-shadow:0 3px 14px #14284b0a}h2{font-size:1.08rem;margin:0 0 12px}.hint{color:#5b6677;font-size:.9rem;line-height:1.45}.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px}label{display:block;font-weight:650;font-size:.9rem;margin-bottom:5px}input,select,textarea{font:inherit;width:100%;padding:10px 11px;border:1px solid #cbd4e1;border-radius:9px;background:white;color:#18212f}input[type=file]{padding:8px}button{font:inherit;border:0;border-radius:10px;padding:11px 15px;font-weight:700;cursor:pointer;background:#1c5fc4;color:white}button.secondary{background:#e8eef7;color:#17385f}button:disabled{opacity:.45;cursor:not-allowed}.actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}.status{font-size:.92rem;margin-top:9px;color:#315b32}.warn{color:#9a4d00}.assignment{border:1px solid #dce2ec;border-radius:12px;padding:14px;margin:12px 0}.assignment h3{margin:0 0 10px;font-size:1rem}.assignment .grid{grid-template-columns:repeat(auto-fit,minmax(155px,1fr))}.small{font-size:.8rem;color:#697587}#preview{width:100%;max-width:520px;height:auto;border:1px solid #dce2ec;border-radius:8px;background:white;display:block;margin-top:12px}[hidden]{display:none!important}.preview-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}.preview-actions button{flex:1;min-width:145px}#imageModal{position:fixed;inset:0;background:#101828f7;z-index:9999;display:none;overflow:auto;padding:14px;padding-top:calc(14px + env(safe-area-inset-top,0px));padding-bottom:calc(18px + env(safe-area-inset-bottom,0px))}#imageModal.open{display:block}#imageModal img{display:block;width:auto;height:auto;max-width:100%;margin:14px auto;background:white}#imageModal .modalBar{max-width:760px;margin:auto;display:flex;gap:8px;justify-content:space-between;align-items:center;color:white;flex-wrap:wrap}#imageModal .modalBar button{background:white;color:#18212f;flex:1;min-width:130px}#imageModal .modalHelp{max-width:760px;margin:12px auto;color:white;font-size:.94rem;line-height:1.45}.muted{font-weight:400;color:#687589}
+:root{font-family:system-ui,-apple-system,Segoe UI,sans-serif;color:#18212f;background:#f4f6fa}*{box-sizing:border-box}body{margin:0}
+header{background:#152b4a;color:#fff;padding:22px 18px;padding-top:calc(22px + env(safe-area-inset-top,0px))}header h1{margin:0 0 6px;font-size:1.35rem}header p{margin:0;color:#dce6f5;font-size:.94rem}
+main{max-width:980px;margin:20px auto;padding:0 14px 40px}
+.card{background:white;border:1px solid #dce2ec;border-radius:15px;padding:18px;margin-bottom:14px;box-shadow:0 3px 14px #14284b0a}
+h2{font-size:1.08rem;margin:0 0 12px}.hint{color:#5b6677;font-size:.9rem;line-height:1.45}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px}
+label{display:block;font-weight:650;font-size:.9rem;margin-bottom:5px}
+input,select,textarea{font:inherit;font-size:16px;width:100%;padding:10px 11px;border:1px solid #cbd4e1;border-radius:9px;background:white;color:#18212f}input[type=file]{padding:8px}
+textarea{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:13px;white-space:pre;overflow:auto}
+button{font:inherit;border:0;border-radius:10px;padding:11px 15px;font-weight:700;cursor:pointer;background:#1c5fc4;color:white}button.secondary{background:#e8eef7;color:#17385f}button:disabled{opacity:.45;cursor:not-allowed}
+.actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}.status{font-size:.92rem;margin-top:9px;color:#315b32}.warn{color:#9a4d00}
+.week{margin:18px 0 4px;font-size:.95rem;color:#17385f;border-bottom:1px solid #dce2ec;padding-bottom:4px}
+.assignment{border:1px solid #dce2ec;border-radius:12px;padding:14px;margin:12px 0}.assignment.missing{border-color:#e0a050;background:#fffaf2}.assignment h3{margin:0 0 10px;font-size:1rem}.assignment .grid{grid-template-columns:repeat(auto-fit,minmax(155px,1fr))}
+.small{font-size:.8rem;color:#697587}.muted{font-weight:400;color:#687589}
+#preview{width:100%;max-width:520px;height:auto;border:1px solid #dce2ec;border-radius:8px;background:white;display:block;margin-top:12px}[hidden]{display:none!important}
+.preview-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}.preview-actions button{flex:1;min-width:145px}
+details summary{cursor:pointer;font-weight:700;color:#17385f;padding:4px 0}
+.layout{display:grid;grid-template-columns:auto 1fr 1fr;gap:6px 10px;align-items:center;margin-top:10px;max-width:520px}.layout input{padding:7px 8px}.layout .head{font-size:.8rem;color:#697587;font-weight:700}
+#imageModal{position:fixed;inset:0;background:#101828f7;z-index:9999;display:none;overflow:auto;padding:14px;padding-top:calc(14px + env(safe-area-inset-top,0px));padding-bottom:calc(18px + env(safe-area-inset-bottom,0px))}#imageModal.open{display:block}#imageModal img{display:block;width:auto;height:auto;max-width:100%;margin:14px auto;background:white}#imageModal .modalBar{max-width:760px;margin:auto;display:flex;gap:8px;justify-content:space-between;align-items:center;color:white;flex-wrap:wrap}#imageModal .modalBar button{background:white;color:#18212f;flex:1;min-width:130px}#imageModal .modalHelp{max-width:760px;margin:12px auto;color:white;font-size:.94rem;line-height:1.45}
 </style>
 </head>
 <body>
 <header><h1>Generador de hojas individuales S-89</h1><p>Cargá los PDF, verificá los datos y generá una imagen por participante.</p></header>
 <main>
-<section class="card"><h2>1. Cargar los PDF</h2><div class="grid"><div><label for="monthly">Programa mensual S-140 (opcional)</label><input id="monthly" type="file" accept="application/pdf"></div><div><label for="template">Plantilla individual S-89</label><input id="template" type="file" accept="application/pdf"></div></div><p class="hint">Los archivos se procesan localmente en tu navegador. No subas PDF con nombres ni datos personales al repositorio de GitHub.</p><div class="actions"><button id="readBtn">Leer PDF seleccionados</button></div><div id="status" class="status" aria-live="polite">Primero cargá la plantilla S-89.</div></section>
-<section class="card"><h2>2. Revisar texto del programa</h2><p class="hint">El texto extraído puede salir en distinto orden según el PDF. Usalo como referencia; completá y verificá cada asignación manualmente antes de generar sus hojas.</p><label for="extracted">Texto extraído</label><textarea id="extracted" rows="7" placeholder="El texto del programa mensual aparecerá aquí."></textarea><div class="grid" style="margin-top:12px"><div><label for="meetingDate">Fecha de la reunión</label><input id="meetingDate" placeholder="03/11/2026"></div><div><label for="section">N.º sugerido para nuevas filas</label><select id="startNumber"><option value="3">3 — Lectura de la Biblia</option><option value="4" selected>4 — Seamos mejores maestros</option></select></div></div></section>
-<section class="card"><h2>3. Asignaciones</h2><p class="hint">Agregá una fila por cada estudiante. Revisá el número, título, ayudante y fecha; no se validan automáticamente contra WOL.</p><div id="assignments"></div><div class="actions"><button id="detectBtn" class="secondary">Detectar asignaciones del texto</button><button id="addBtn" class="secondary">+ Agregar participante</button><button id="zipBtn">Descargar todas las imágenes (ZIP)</button></div><p class="small">En iPhone, al generar una imagen se abre una vista ampliada con opciones para compartir o guardar. Para guardar en Fotos, usá el menú Compartir o mantené presionada la imagen.</p></section>
-<section class="card"><h2>Vista previa</h2><p id="previewHint" class="hint">Generá una vista previa desde una de las asignaciones.</p><canvas id="preview" width="720" height="960" hidden></canvas><div id="previewActions" class="preview-actions"></div></section>
+<section class="card"><h2>1. Cargar los PDF</h2>
+<div class="grid"><div><label for="monthly">Programa mensual S-140</label><input id="monthly" type="file" accept="application/pdf"></div><div><label for="template">Plantilla individual S-89</label><input id="template" type="file" accept="application/pdf"></div></div>
+<p class="hint">Los archivos se leen apenas los elegís y se procesan localmente en tu navegador. No subas PDF con nombres ni datos personales al repositorio de GitHub.</p>
+<div class="actions"><button id="readBtn" class="secondary">Volver a leer los PDF</button></div>
+<div id="status" class="status" aria-live="polite">Elegí el programa S-140 y la plantilla S-89.</div></section>
+
+<section class="card"><h2>2. Fecha de las reuniones</h2>
+<p class="hint">El programa trae la semana (por ejemplo “2-8 de noviembre”). Elegí qué día es la reunión de entre semana para que cada hoja tenga la fecha exacta.</p>
+<div class="grid"><div><label for="meetingDay">Día de la reunión</label><select id="meetingDay"><option value="">Poner la semana (ej. 2-8 de noviembre)</option><option value="0">Lunes</option><option value="1">Martes</option><option value="2">Miércoles</option><option value="3">Jueves</option><option value="4">Viernes</option><option value="5">Sábado</option><option value="6">Domingo</option></select></div>
+<div><label for="year">Año del programa</label><input id="year" type="number" min="2020" max="2100" inputmode="numeric"></div>
+<div><label for="meetingDate">Fecha para filas sin semana</label><input id="meetingDate" placeholder="DD/MM/AAAA"></div></div>
+<details style="margin-top:12px"><summary>Ver texto extraído del programa</summary><p class="hint">Si el PDF no se puede leer, podés pegar el texto acá y tocar “Detectar asignaciones”.</p><textarea id="extracted" rows="10" placeholder="El texto del programa mensual aparecerá aquí."></textarea></details></section>
+
+<section class="card"><h2>3. Asignaciones</h2>
+<p class="hint">Se cargan solas desde el S-140: la lectura de la Biblia y las partes de “Seamos mejores maestros”, con estudiante y ayudante. Revisá cada una antes de generar.</p>
+<div id="assignments"></div>
+<div class="actions"><button id="detectBtn" class="secondary">Detectar asignaciones de nuevo</button><button id="addBtn" class="secondary">+ Agregar participante</button></div>
+<div class="actions"><button id="shareAllBtn">Compartir / guardar todas</button><button id="zipBtn" class="secondary">Descargar todas (ZIP)</button></div>
+<p class="small">En iPhone, “Compartir / guardar todas” abre el menú Compartir con todas las imágenes juntas: elegí “Guardar imágenes” para mandarlas a Fotos, o compartilas por WhatsApp.</p></section>
+
+<section class="card"><h2>Vista previa</h2><p id="previewHint" class="hint">Generá una vista previa desde una de las asignaciones.</p><canvas id="preview" width="720" height="960" hidden></canvas><div id="previewActions" class="preview-actions"></div>
+<details style="margin-top:14px"><summary>Ajustar posición de los textos</summary>
+<p class="hint" id="layoutHint">Valores en % del ancho (X) y del alto (Y) de la hoja. Cambiá un número y la vista previa se actualiza. Los cambios quedan guardados en este dispositivo.</p>
+<div class="layout" id="layoutTable"></div>
+<div class="grid" style="margin-top:10px;max-width:520px"><div><label for="fontSize">Tamaño de letra (% del ancho)</label><input id="fontSize" type="number" step="0.1" min="1" max="10"></div></div>
+<div class="actions"><button id="layoutReset" class="secondary">Restablecer posiciones</button></div></details></section>
 </main>
-<div id="imageModal" aria-modal="true" role="dialog"><div class="modalBar"><strong>Hoja S-89 generada</strong><button type="button" id="closeModal">Cerrar ✕</button></div><p class="modalHelp">En iPhone: tocá “Compartir / Guardar imagen” y elegí guardar la imagen. También podés mantener presionada la imagen y seleccionar “Guardar en Fotos”.</p><img id="modalImage" alt="Vista de la hoja S-89"><div class="modalBar"><button type="button" id="modalOpen">Abrir imagen aparte</button><button type="button" id="modalShare">Compartir / Guardar imagen</button><button type="button" id="modalDownload">Descargar PNG</button></div></div>
+
+<div id="imageModal" aria-modal="true" role="dialog"><div class="modalBar"><strong>Hoja S-89 generada</strong><button type="button" id="closeModal">Cerrar ✕</button></div><p class="modalHelp">En iPhone: tocá “Compartir / Guardar imagen” y elegí “Guardar imagen”. También podés mantener presionada la imagen y seleccionar “Guardar en Fotos”.</p><img id="modalImage" alt="Vista de la hoja S-89"><div class="modalBar"><button type="button" id="modalOpen">Abrir imagen aparte</button><button type="button" id="modalShare">Compartir / Guardar imagen</button><button type="button" id="modalDownload">Descargar PNG</button></div></div>
+
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
 <script>
 if(window.pdfjsLib)pdfjsLib.GlobalWorkerOptions.workerSrc='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
-const $=id=>document.getElementById(id);let templateImage=null, rows=[];let modalBlob=null,modalName='hoja-s89.png';
+const $=id=>document.getElementById(id);
+let templateImage=null,rows=[],programPages=null,lastPreview=-1;
+let modalBlob=null,modalName='hoja-s89.png';
+
 function setStatus(t,warn=false){$('status').textContent=t;$('status').className=warn?'status warn':'status'}
-async function readPdfText(file){const data=new Uint8Array(await file.arrayBuffer()),pdf=await pdfjsLib.getDocument({data}).promise;let all=[];for(let p=1;p<=pdf.numPages;p++){const page=await pdf.getPage(p),tc=await page.getTextContent();all.push(tc.items.map(i=>i.str).filter(Boolean).join(' '))}return all.join('\n\n--- Página ---\n\n')}
-$('readBtn').onclick=async()=>{try{const mf=$('monthly').files[0],tf=$('template').files[0];if(!mf&&!tf){setStatus('Seleccioná al menos un PDF.',true);return}setStatus('Leyendo PDF…');if(mf)$('extracted').value=await readPdfText(mf);if(tf){const pdf=await pdfjsLib.getDocument({data:new Uint8Array(await tf.arrayBuffer())}).promise;const page=await pdf.getPage(1),vp=page.getViewport({scale:2});const c=document.createElement('canvas');c.width=vp.width;c.height=vp.height;await page.render({canvasContext:c.getContext('2d'),viewport:vp}).promise;templateImage=c;$('previewHint').textContent='Plantilla S-89 cargada. Generá una vista previa desde una asignación.'}setStatus('PDF leídos correctamente. Revisá el texto y completá las asignaciones.')}catch(e){setStatus('No se pudieron leer los PDF: '+e.message,true)}};
-function addRow(data={}){const num=Number(data.num)||Number($('startNumber').value)||4;rows.push({name:data.name||'',helper:data.helper||'',date:data.date||$('meetingDate').value||'',num,title:data.title||'',place:data.place||'Sala principal'});renderRows()}
-function detectAssignments(){const text=$('extracted').value;if(!text.trim()){alert('Primero leé el PDF mensual o pegá el texto del programa.');return}const norm=text.replace(/\s+/g,' ');const candidates=[];const reading=norm.match(/Lectura de la Biblia\s*[:,\-]?\s*(.{0,90}?)(?=\b(?:SEAMOS MEJORES MAESTROS|Empiece conversaciones|Hagamos revisitas|Hagamos discípulos|NUESTRA VIDA CRISTIANA)\b|$)/i);if(reading)candidates.push({title:('Lectura de la Biblia: '+reading[1]).trim().slice(0,125),num:3});const sectionAt=norm.toUpperCase().indexOf('SEAMOS MEJORES MAESTROS');const section=sectionAt>=0?norm.slice(sectionAt):norm;const cutoff=section.search(/NUESTRA VIDA CRISTIANA|ESTUDIO BÍBLICO DE LA CONGREGACIÓN/i);const teachers=cutoff>0?section.slice(0,cutoff):section;const patterns=[[/Empiece conversaciones/ig,4,'Empiece conversaciones'],[/Hagamos revisitas/ig,5,'Hagamos revisitas'],[/Hagamos discípulos/ig,6,'Hagamos discípulos']];for(const [re,num,title] of patterns){let m;while((m=re.exec(teachers))!==null){let around=teachers.slice(m.index,m.index+125);candidates.push({title:(around.split(/(?:Empiece conversaciones|Hagamos revisitas|Hagamos discípulos|CANCIÓN|NUESTRA VIDA CRISTIANA)/i)[0]||title).trim().slice(0,125)||title,num})}}if(!candidates.length){alert('No detecté títulos con seguridad. Podés agregar las filas manualmente; el texto extraído queda disponible arriba.');return}rows=candidates.map(c=>({name:'',helper:'',date:$('meetingDate').value||'',num:c.num,title:c.title,place:'Sala principal'}));renderRows();$('previewHint').textContent='Se detectaron '+rows.length+' posibles asignaciones. Completá nombres y ayudantes, y verificá los títulos/números antes de generar.'}
+function store(k,v){try{localStorage.setItem('s89.'+k,JSON.stringify(v))}catch(e){}}
+function load(k,def){try{const v=localStorage.getItem('s89.'+k);return v==null?def:JSON.parse(v)}catch(e){return def}}
+
+/* ---------- Lectura del S-140 con posiciones ---------- */
+
+// Devuelve, por página, los textos con su posición (y medida desde arriba).
+async function readPdfItems(file){
+  const pdf=await pdfjsLib.getDocument({data:new Uint8Array(await file.arrayBuffer())}).promise,pages=[];
+  for(let p=1;p<=pdf.numPages;p++){
+    const page=await pdf.getPage(p),vp=page.getViewport({scale:1}),tc=await page.getTextContent();
+    const items=tc.items.filter(i=>i.str&&i.str.trim()).map(i=>({str:i.str,x:i.transform[4],y:vp.height-i.transform[5],w:i.width}));
+    pages.push({width:vp.width,height:vp.height,items});
+  }
+  return pages;
+}
+
+// Agrupa textos que están a la misma altura en líneas, ordenadas de arriba a abajo.
+function toLines(items,tol=3){
+  const sorted=[...items].sort((a,b)=>a.y-b.y||a.x-b.x),lines=[];
+  for(const it of sorted){
+    const line=lines.find(l=>Math.abs(l.y-it.y)<=tol);
+    if(line)line.items.push(it);else lines.push({y:it.y,items:[it]});
+  }
+  for(const l of lines){
+    l.items.sort((a,b)=>a.x-b.x);l.x=l.items[0].x;
+    let text='';l.items.forEach((it,i)=>{if(i){const prev=l.items[i-1],gap=it.x-(prev.x+prev.w);text+=gap>25?'   |   ':(gap>1&&!/\s$/.test(text)&&!/^\s/.test(it.str)?' ':'')}text+=it.str});
+    l.text=text.replace(/[ \t]+/g,' ').trim();
+  }
+  return lines.sort((a,b)=>a.y-b.y);
+}
+
+function pagesToText(pages){return pages.map(p=>toLines(p.items).map(l=>l.text).join('\n')).join('\n\n--- Página ---\n\n')}
+
+const MONTHS=['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'];
+function monthIndex(s){s=(s||'').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'');if(s==='setiembre')return 8;return MONTHS.findIndex(m=>m===s)}
+
+// "2- 8 de Noviembre", "30 de noviembre-6 de diciembre"
+function parseWeek(text){
+  const m=text.match(/(\d{1,2})(?:\s+de\s+([a-záéíóú]+))?\s*[-–al]+\s*(\d{1,2})\s+de\s+([a-záéíóú]+)/i);
+  if(!m)return null;
+  const m2=monthIndex(m[4]);if(m2<0)return null;
+  const m1=m[2]?monthIndex(m[2]):m2;if(m1<0)return null;
+  const d1=+m[1],d2=+m[3];
+  return {d1,m1,d2,m2,label:m[2]?`${d1} de ${MONTHS[m1]} - ${d2} de ${MONTHS[m2]}`:`${d1}-${d2} de ${MONTHS[m2]}`};
+}
+
+function cleanTitle(s){
+  return s.replace(/^\s*\d{0,2}\s*\.\s*/,'').replace(/\(\s*\d+\s*mins?\.?\s*\)/gi,'').replace(/conversaci[oó]nes/gi,'conversaciones')
+    .replace(/Lectura de la Biblia\s*[,/.:;-]*\s*/i,'Lectura de la Biblia: ').replace(/\s+([,.;:?])/g,'$1').replace(/\s+/g,' ')
+    .replace(/^\[\s*(Título)?\s*\]$/i,'').replace(/[\s.,;:/]+$/,'').trim();
+}
+
+function splitNames(s){
+  const parts=s.replace(/\s+/g,' ').replace(/[\s.,;]+$/,'').split('/').map(p=>p.trim()).filter(Boolean);
+  return {name:parts[0]||'',helper:parts.slice(1).join(' y ')};
+}
+
+const LABEL=/:\s*$|^Auditorio principal$|^Sala (principal|auxiliar)/i;
+
+// Interpreta las páginas del S-140: semana, lectura de la Biblia y partes de "Seamos mejores maestros".
+function parseProgram(pages){
+  const found=[];
+  pages.forEach((pg,pi)=>{
+    const W=pg.width,all=toLines(pg.items);
+    const week=parseWeek(all.map(l=>l.text).join(' '));
+    // Columna izquierda (títulos) sin la columna de horarios ni viñetas; columna derecha (nombres).
+    const left=toLines(pg.items.filter(i=>i.x<W*.6&&!/^\s*\d{1,2}:\d{2}\s*$/.test(i.str)&&!/^\s*[●•]\s*$/.test(i.str)));
+    const right=toLines(pg.items.filter(i=>i.x>=W*.68)).filter(l=>!LABEL.test(l.text));
+    const head=re=>{const l=left.find(l=>re.test(l.text));return l?l.y:null};
+    const yTes=head(/TESOROS DE LA BIBLIA/i),yMae=head(/SEAMOS MEJORES MAESTROS/i),yVida=head(/NUESTRA VIDA CRISTIANA/i);
+    if(yMae==null)return;
+    const top=yTes!=null?yTes:yMae,bottom=yVida!=null?yVida:pg.height;
+    const isHead=l=>/^(TESOROS DE LA BIBLIA|SEAMOS MEJORES MAESTROS|NUESTRA VIDA CRISTIANA)/i.test(l.text);
+    // Cada parte empieza con una línea que arranca con "." o "4." y sigue hasta la próxima.
+    const starts=left.filter(l=>l.y>top&&l.y<bottom&&!isHead(l)&&/^\d{0,2}\s*\./.test(l.text));
+    let next=4;
+    starts.forEach((s,k)=>{
+      const end=k+1<starts.length?starts[k+1].y:(s.y<yMae?yMae:bottom);
+      const titleLines=left.filter(l=>l.y>=s.y&&l.y<end-1&&!isHead(l)).map(l=>l.text);
+      const title=cleanTitle(titleLines.join(' '));
+      const names=right.filter(l=>l.y>=s.y-6&&l.y<end-6).map(l=>l.text).join(' ');
+      const explicit=(s.text.match(/^(\d{1,2})\s*\./)||[])[1];
+      let num;
+      if(s.y<yMae){if(!/Lectura de la Biblia/i.test(title))return;num=3}
+      else{if(!title&&!names)return;num=explicit?+explicit:next;next=num+1}
+      found.push({...splitNames(names),title,num,week,page:pi+1});
+    });
+  });
+  // Si ninguna parte tiene nombre (programa en blanco) se muestran igual para completarlas a mano.
+  const named=found.filter(f=>f.name);
+  return named.length?named:found;
+}
+
+// Plan B para texto pegado a mano (sin posiciones).
+function detectFromPlainText(text){
+  const norm=text.replace(/\s+/g,' '),out=[];
+  const reading=norm.match(/Lectura de la Biblia\s*[:,\-/]?\s*(.{0,60}?\d+:\d+(?:-\d+)?)/i);
+  if(reading)out.push({title:cleanTitle('Lectura de la Biblia: '+reading[1]),num:3});
+  const at=norm.toUpperCase().indexOf('SEAMOS MEJORES MAESTROS'),section=at>=0?norm.slice(at):norm;
+  const cut=section.search(/NUESTRA VIDA CRISTIANA/i),teachers=cut>0?section.slice(0,cut):section;
+  const re=/(Empiece conversaci[oó]nes|Hagamos revisitas|Haga revisitas|Hagamos disc[ií]pulos|Explique sus creencias|Discurso)[^.]*/gi;let m,num=4;
+  while((m=re.exec(teachers))!==null)out.push({title:cleanTitle(m[0]),num:num++});
+  return out.map(o=>({name:'',helper:'',week:parseWeek(norm),...o}));
+}
+
+/* ---------- Fechas ---------- */
+
+function pad(n){return String(n).padStart(2,'0')}
+function dateFor(week){
+  if(!week)return $('meetingDate').value||'';
+  const day=$('meetingDay').value;
+  if(day==='')return week.label;
+  let y=+$('year').value||new Date().getFullYear();
+  const start=new Date(y,week.m1,week.d1);start.setDate(start.getDate()+ +day);
+  return `${pad(start.getDate())}/${pad(start.getMonth()+1)}/${start.getFullYear()}`;
+}
+function refreshDates(){store('meetingDay',$('meetingDay').value);rows.forEach(r=>{if(r.autoDate)r.date=dateFor(r.week)});renderRows()}
+
+/* ---------- Lectura de PDF ---------- */
+
+async function readMonthly(){
+  const f=$('monthly').files[0];if(!f)return;
+  setStatus('Leyendo programa S-140…');
+  programPages=await readPdfItems(f);
+  $('extracted').value=pagesToText(programPages);
+  detectAssignments(true);
+}
+
+async function readTemplate(){
+  const f=$('template').files[0];if(!f)return;
+  setStatus('Leyendo plantilla S-89…');
+  const pdf=await pdfjsLib.getDocument({data:new Uint8Array(await f.arrayBuffer())}).promise;
+  const page=await pdf.getPage(1),vp=page.getViewport({scale:3});
+  const c=document.createElement('canvas');c.width=vp.width;c.height=vp.height;
+  await page.render({canvasContext:c.getContext('2d'),viewport:vp}).promise;
+  templateImage=c;
+  const fromForm=layoutFromFormFields(await page.getAnnotations(),page.getViewport({scale:1}));
+  autoLayout=fromForm||DEFAULT_LAYOUT;
+  $('layoutHint').textContent=(fromForm?'Posiciones tomadas de los campos del formulario S-89. ':'La plantilla no tiene campos de formulario: se usan posiciones aproximadas. ')+'Valores en % del ancho (X) y del alto (Y). Los cambios quedan guardados en este dispositivo.';
+  if(!load('layout',null))layout=clone(autoLayout);
+  renderLayoutTable();
+  $('previewHint').textContent='Plantilla S-89 cargada'+(fromForm?' (con campos de formulario detectados)':'')+'. Generá una vista previa desde una asignación.';
+}
+
+async function readAll(){
+  try{
+    if(!$('monthly').files[0]&&!$('template').files[0]){setStatus('Seleccioná al menos un PDF.',true);return}
+    await readTemplate();await readMonthly();
+    const msg=[];if(templateImage)msg.push('plantilla S-89 lista');if(programPages)msg.push(rows.length+' asignaciones detectadas');
+    setStatus(msg.length?'Listo: '+msg.join(', ')+'. Revisá los datos antes de generar.':'Elegí los PDF.');
+  }catch(e){setStatus('No se pudieron leer los PDF: '+e.message,true)}
+}
+$('readBtn').onclick=readAll;$('monthly').onchange=readAll;$('template').onchange=readAll;
+
+function detectAssignments(silent){
+  let found=[];
+  if(programPages)found=parseProgram(programPages);
+  if(!found.length){
+    const text=$('extracted').value;
+    if(!text.trim()){if(!silent)alert('Primero elegí el PDF mensual o pegá el texto del programa.');return}
+    found=detectFromPlainText(text);
+  }
+  if(!found.length){if(!silent)alert('No detecté asignaciones. Podés agregarlas a mano con “+ Agregar participante”.');return}
+  rows=found.map(f=>({name:f.name,helper:f.helper,num:f.num,title:f.title,week:f.week||null,autoDate:true,date:dateFor(f.week),place:'Sala principal'}));
+  renderRows();
+  const missing=rows.filter(r=>!r.name).length;
+  $('previewHint').textContent='Se detectaron '+rows.length+' asignaciones'+(missing?' ('+missing+' sin nombre: completalas)':'')+'. Verificá antes de generar.';
+}
+
+/* ---------- Filas ---------- */
+
+function addRow(){rows.push({name:'',helper:'',num:4,title:'',week:null,autoDate:false,date:$('meetingDate').value||'',place:'Sala principal'});renderRows()}
 function escapeHtml(s){return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
-function renderRows(){const root=$('assignments');root.innerHTML='';rows.forEach((r,i)=>{const div=document.createElement('div');div.className='assignment';div.innerHTML=`<h3>Participante ${i+1} <span class="muted">— intervención ${escapeHtml(r.num)}</span></h3><div class="grid"><div><label>Estudiante</label><input data-i="${i}" data-k="name" value="${escapeHtml(r.name)}" placeholder="Nombre y apellido"></div><div><label>Ayudante</label><input data-i="${i}" data-k="helper" value="${escapeHtml(r.helper)}" placeholder="Si corresponde"></div><div><label>Fecha</label><input data-i="${i}" data-k="date" value="${escapeHtml(r.date)}" placeholder="DD/MM/AAAA"></div><div><label>N.º de intervención</label><input data-i="${i}" data-k="num" type="number" min="1" max="99" value="${escapeHtml(r.num)}"></div><div style="grid-column:1/-1"><label>Asignación</label><input data-i="${i}" data-k="title" value="${escapeHtml(r.title)}" placeholder="Ej.: Lectura de la Biblia: Jeremías 50:24-40"></div><div><label>Se presentará en</label><select data-i="${i}" data-k="place"><option ${r.place==='Sala principal'?'selected':''}>Sala principal</option><option ${r.place==='Sala auxiliar núm. 1'?'selected':''}>Sala auxiliar núm. 1</option><option ${r.place==='Sala auxiliar núm. 2'?'selected':''}>Sala auxiliar núm. 2</option></select></div></div><div class="actions"><button class="secondary" data-action="preview" data-i="${i}">Vista previa</button><button data-action="download" data-i="${i}">Generar / guardar PNG</button><button class="secondary" data-action="remove" data-i="${i}">Eliminar</button></div>`;root.appendChild(div)});root.querySelectorAll('[data-i][data-k]').forEach(el=>el.addEventListener('input',e=>{rows[+e.target.dataset.i][e.target.dataset.k]=e.target.value}));root.querySelectorAll('button[data-action]').forEach(b=>b.onclick=async()=>{const i=+b.dataset.i;if(b.dataset.action==='remove'){rows.splice(i,1);renderRows()}else await makeImage(i,b.dataset.action==='download')})}
-$('addBtn').onclick=()=>addRow();$('detectBtn').onclick=detectAssignments;
-function renderCanvas(r){const c=document.createElement('canvas');c.width=templateImage.width;c.height=templateImage.height;const ctx=c.getContext('2d');ctx.drawImage(templateImage,0,0);const sx=c.width/360,sy=c.height/480;ctx.fillStyle='#fff';[[91,57,255,21],[108,101,240,21],[82,132,267,21],[185,165,165,21]].forEach(a=>ctx.fillRect(a[0]*sx,a[1]*sy,a[2]*sx,a[3]*sy));ctx.fillStyle='#111';ctx.textBaseline='alphabetic';ctx.font=`${Math.round(16*sx)}px Arial`;ctx.fillText(r.name||'',91*sx,74*sy);ctx.fillText(r.helper||'',113*sx,106*sy);ctx.fillText(r.date||'',83*sx,139*sy);ctx.fillText(String(r.num||''),190*sx,173*sy);const ym={'Sala principal':260,'Sala auxiliar núm. 1':278,'Sala auxiliar núm. 2':296};ctx.font=`${Math.round(17*sx)}px Arial`;ctx.fillText('☒',37*sx,(ym[r.place]||260)*sy);return c}
-function fileName(r){return 'S89_'+(r.name||'participante').replace(/[^a-z0-9_-]/gi,'_')+'_'+(r.date||'fecha').replace(/[^a-z0-9_-]/gi,'_')+'.png'}
+const PLACES=['Sala principal','Sala auxiliar núm. 1','Sala auxiliar núm. 2'];
+
+function renderRows(){
+  const root=$('assignments');root.innerHTML='';let lastWeek=null;
+  rows.forEach((r,i)=>{
+    const wl=r.week?r.week.label:'Sin semana';
+    if(wl!==lastWeek){const h=document.createElement('h3');h.className='week';h.textContent='Semana '+wl;root.appendChild(h);lastWeek=wl}
+    const div=document.createElement('div');div.className='assignment'+(r.name?'':' missing');
+    div.innerHTML=`<h3>${escapeHtml(r.title||'Asignación')} <span class="muted">— intervención ${escapeHtml(r.num)}</span></h3><div class="grid"><div><label>Estudiante</label><input data-i="${i}" data-k="name" value="${escapeHtml(r.name)}" placeholder="Nombre y apellido"></div><div><label>Ayudante</label><input data-i="${i}" data-k="helper" value="${escapeHtml(r.helper)}" placeholder="Si corresponde"></div><div><label>Fecha</label><input data-i="${i}" data-k="date" value="${escapeHtml(r.date)}" placeholder="DD/MM/AAAA"></div><div><label>N.º de intervención</label><input data-i="${i}" data-k="num" type="number" inputmode="numeric" min="1" max="99" value="${escapeHtml(r.num)}"></div><div style="grid-column:1/-1"><label>Asignación (referencia, no se imprime)</label><input data-i="${i}" data-k="title" value="${escapeHtml(r.title)}" placeholder="Ej.: Lectura de la Biblia: Jeremías 50:24-40"></div><div><label>Se presentará en</label><select data-i="${i}" data-k="place">${PLACES.map(p=>`<option ${r.place===p?'selected':''}>${p}</option>`).join('')}</select></div></div><div class="actions"><button class="secondary" data-action="preview" data-i="${i}">Vista previa</button><button data-action="download" data-i="${i}">Generar / guardar PNG</button><button class="secondary" data-action="remove" data-i="${i}">Eliminar</button></div>`;
+    root.appendChild(div);
+  });
+  root.querySelectorAll('[data-i][data-k]').forEach(el=>el.addEventListener('input',e=>{const r=rows[+e.target.dataset.i],k=e.target.dataset.k;r[k]=e.target.value;if(k==='date')r.autoDate=false;if(k==='name')e.target.closest('.assignment').classList.toggle('missing',!r.name)}));
+  root.querySelectorAll('button[data-action]').forEach(b=>b.onclick=async()=>{const i=+b.dataset.i;if(b.dataset.action==='remove'){rows.splice(i,1);renderRows()}else await makeImage(i,b.dataset.action==='download')});
+}
+$('addBtn').onclick=addRow;$('detectBtn').onclick=()=>detectAssignments(false);
+$('meetingDay').onchange=refreshDates;$('year').oninput=refreshDates;
+
+/* ---------- Posiciones sobre la hoja ---------- */
+
+// x/y en fracción del ancho/alto. Texto: x = inicio, y = línea base. Casillas: centro de la casilla.
+const DEFAULT_LAYOUT={font:16/360,name:{x:91/360,y:74/480},helper:{x:113/360,y:106/480},date:{x:83/360,y:139/480},num:{x:190/360,y:173/480},
+  check0:{x:43/360,y:254/480},check1:{x:43/360,y:272/480},check2:{x:43/360,y:290/480},cover:true};
+const FIELDS=[['name','Nombre'],['helper','Ayudante'],['date','Fecha'],['num','Intervención núm.'],['check0','Casilla sala principal'],['check1','Casilla auxiliar 1'],['check2','Casilla auxiliar 2']];
+const clone=o=>JSON.parse(JSON.stringify(o));
+let autoLayout=DEFAULT_LAYOUT,layout=load('layout',null)||clone(DEFAULT_LAYOUT);
+
+// Si la S-89 es el formulario oficial con campos rellenables, usa la ubicación real de cada campo.
+function layoutFromFormFields(annots,vp){
+  const W=vp.width,H=vp.height,widgets=annots.filter(a=>a.subtype==='Widget'&&a.rect);
+  const box=a=>({x0:a.rect[0]/W,x1:a.rect[2]/W,top:(H-a.rect[3])/H,bot:(H-a.rect[1])/H});
+  const texts=widgets.filter(a=>a.fieldType==='Tx').map(box).sort((a,b)=>a.top-b.top||a.x0-b.x0);
+  const checks=widgets.filter(a=>a.fieldType==='Btn'&&(a.checkBox||a.radioButton)).map(box).sort((a,b)=>a.top-b.top||a.x0-b.x0);
+  if(texts.length<4)return null;
+  const t=b=>({x:b.x0+.006,y:b.bot-(b.bot-b.top)*.22});
+  const L={font:Math.min(DEFAULT_LAYOUT.font,(texts[0].bot-texts[0].top)*H/W*.72),name:t(texts[0]),helper:t(texts[1]),date:t(texts[2]),num:t(texts[3]),cover:false};
+  for(let k=0;k<3;k++){const c=checks[k];L['check'+k]=c?{x:(c.x0+c.x1)/2,y:(c.top+c.bot)/2}:clone(DEFAULT_LAYOUT['check'+k])}
+  return L;
+}
+
+function renderLayoutTable(){
+  const t=$('layoutTable');t.innerHTML='<div class="head">Campo</div><div class="head">X %</div><div class="head">Y %</div>';
+  FIELDS.forEach(([k,label])=>{
+    t.insertAdjacentHTML('beforeend',`<div>${label}</div><input type="number" step="0.1" data-f="${k}" data-c="x" value="${(layout[k].x*100).toFixed(1)}"><input type="number" step="0.1" data-f="${k}" data-c="y" value="${(layout[k].y*100).toFixed(1)}">`);
+  });
+  t.querySelectorAll('input').forEach(el=>el.oninput=()=>{const v=parseFloat(el.value);if(isNaN(v))return;layout[el.dataset.f][el.dataset.c]=v/100;layoutChanged()});
+  $('fontSize').value=(layout.font*100).toFixed(1);
+}
+$('fontSize').oninput=()=>{const v=parseFloat($('fontSize').value);if(!isNaN(v)&&v>0){layout.font=v/100;layoutChanged()}};
+$('layoutReset').onclick=()=>{layout=clone(autoLayout);try{localStorage.removeItem('s89.layout')}catch(e){}renderLayoutTable();if(lastPreview>=0)makeImage(lastPreview,false)};
+function layoutChanged(){store('layout',layout);if(lastPreview>=0&&rows[lastPreview])makeImage(lastPreview,false)}
+
+function fitText(ctx,text,x,y,size,maxW){
+  let s=size;ctx.font=`${s}px Arial, Helvetica, sans-serif`;
+  while(s>size*.55&&ctx.measureText(text).width>maxW){s-=1;ctx.font=`${s}px Arial, Helvetica, sans-serif`}
+  ctx.fillText(text,x,y);
+}
+
+function renderCanvas(r){
+  const c=document.createElement('canvas');c.width=templateImage.width;c.height=templateImage.height;
+  const ctx=c.getContext('2d'),W=c.width,H=c.height,L=layout,size=Math.round(L.font*W);
+  ctx.drawImage(templateImage,0,0);
+  const fields=[['name',r.name],['helper',r.helper],['date',r.date],['num',String(r.num||'')]];
+  if(L.cover){ctx.fillStyle='#fff';fields.forEach(([k,v])=>{if(v)ctx.fillRect(L[k].x*W,L[k].y*H-size*1.05,Math.min(W*.97-L[k].x*W,ctx.measureText(v).width+size*12),size*1.3)})}
+  ctx.fillStyle='#111';ctx.textBaseline='alphabetic';
+  fields.forEach(([k,v])=>{if(v)fitText(ctx,v,L[k].x*W,L[k].y*H,size,W*.96-L[k].x*W)});
+  const p=L['check'+Math.max(0,PLACES.indexOf(r.place))],cx=p.x*W,cy=p.y*H,h=size*.42;
+  ctx.strokeStyle='#111';ctx.lineWidth=Math.max(2,size*.13);ctx.lineCap='round';
+  ctx.beginPath();ctx.moveTo(cx-h,cy-h);ctx.lineTo(cx+h,cy+h);ctx.moveTo(cx+h,cy-h);ctx.lineTo(cx-h,cy+h);ctx.stroke();
+  return c;
+}
+
+/* ---------- Imágenes, compartir, ZIP ---------- */
+
+function fileName(r,i){return 'S89_'+(i!=null?pad(i+1)+'_':'')+(r.name||'participante').normalize('NFD').replace(/[̀-ͯ]/g,'').replace(/[^a-z0-9_-]/gi,'_')+'_'+(r.date||'fecha').replace(/[^a-z0-9_-]/gi,'_')+'.png'}
 function blobFromCanvas(c){return new Promise((resolve,reject)=>c.toBlob(b=>b?resolve(b):reject(Error('No se pudo crear la imagen PNG.')),'image/png'))}
 function downloadBlob(blob,name){const url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download=name;a.style.display='none';document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),30000)}
-async function shareCurrent(){if(!modalBlob)return;try{const f=new File([modalBlob],modalName,{type:'image/png'});if(navigator.canShare&&navigator.canShare({files:[f]})){await navigator.share({files:[f],title:'Hoja S-89'});return}downloadBlob(modalBlob,modalName)}catch(e){alert('Mantené presionada la imagen para guardarla en Fotos, o tocá “Abrir imagen aparte”.')}}
-$('closeModal').onclick=()=>$('imageModal').classList.remove('open');$('modalShare').onclick=shareCurrent;$('modalDownload').onclick=()=>{if(modalBlob)downloadBlob(modalBlob,modalName)};$('modalOpen').onclick=()=>{const w=window.open();if(w){w.document.write('<!doctype html><meta name="viewport" content="width=device-width,initial-scale=1"><title>Hoja S-89</title><body style="margin:0;background:#222;text-align:center"><img style="width:100%;height:auto;max-width:900px" alt="Hoja S-89"></body>');w.document.querySelector('img').src=$('modalImage').src}else alert('El navegador bloqueó la pestaña. Mantené presionada la imagen en esta ventana para guardarla.')};
-async function makeImage(i,download){if(!templateImage){alert('Primero cargá la plantilla S-89 y tocá “Leer PDF seleccionados”.');return}const r=rows[i];if(!r)return;const c=renderCanvas(r);modalBlob=await blobFromCanvas(c);modalName=fileName(r);const url=c.toDataURL('image/png');$('preview').width=c.width;$('preview').height=c.height;$('preview').getContext('2d').drawImage(c,0,0);$('preview').hidden=false;$('previewHint').textContent='Vista previa: '+(r.name||'participante')+' — intervención '+(r.num||'sin número');$('previewActions').innerHTML='';const big=document.createElement('button');big.textContent='Ver imagen grande / Guardar';big.onclick=()=>openModal(url);$('previewActions').appendChild(big);const sh=document.createElement('button');sh.className='secondary';sh.textContent='Compartir PNG';sh.onclick=shareCurrent;$('previewActions').appendChild(sh);if(download){if(/iPad|iPhone|iPod/.test(navigator.userAgent)){openModal(url)}else downloadBlob(modalBlob,modalName)}}
+async function shareCurrent(){if(!modalBlob)return;try{const f=new File([modalBlob],modalName,{type:'image/png'});if(navigator.canShare&&navigator.canShare({files:[f]})){await navigator.share({files:[f],title:'Hoja S-89'});return}downloadBlob(modalBlob,modalName)}catch(e){if(e.name!=='AbortError')alert('Mantené presionada la imagen para guardarla en Fotos, o tocá “Abrir imagen aparte”.')}}
+$('closeModal').onclick=()=>$('imageModal').classList.remove('open');$('modalShare').onclick=shareCurrent;$('modalDownload').onclick=()=>{if(modalBlob)downloadBlob(modalBlob,modalName)};
+$('modalOpen').onclick=()=>{const w=window.open();if(w){w.document.write('<!doctype html><meta name="viewport" content="width=device-width,initial-scale=1"><title>Hoja S-89</title><body style="margin:0;background:#222;text-align:center"><img style="width:100%;height:auto;max-width:900px" alt="Hoja S-89"></body>');w.document.querySelector('img').src=$('modalImage').src}else alert('El navegador bloqueó la pestaña. Mantené presionada la imagen en esta ventana para guardarla.')};
+
+async function makeImage(i,download){
+  if(!templateImage){alert('Primero elegí la plantilla S-89.');return}
+  const r=rows[i];if(!r)return;lastPreview=i;
+  const c=renderCanvas(r);modalBlob=await blobFromCanvas(c);modalName=fileName(r);
+  const url=c.toDataURL('image/png');
+  $('preview').width=c.width;$('preview').height=c.height;$('preview').getContext('2d').drawImage(c,0,0);$('preview').hidden=false;
+  $('previewHint').textContent='Vista previa: '+(r.name||'participante')+' — intervención '+(r.num||'sin número');
+  $('previewActions').innerHTML='';
+  const big=document.createElement('button');big.textContent='Ver imagen grande / Guardar';big.onclick=()=>openModal(url);$('previewActions').appendChild(big);
+  const sh=document.createElement('button');sh.className='secondary';sh.textContent='Compartir PNG';sh.onclick=shareCurrent;$('previewActions').appendChild(sh);
+  if(download){if(/iPad|iPhone|iPod/.test(navigator.userAgent)||(navigator.maxTouchPoints>1&&/Mac/.test(navigator.platform)))openModal(url);else downloadBlob(modalBlob,modalName)}
+}
 function openModal(url){$('modalImage').src=url;$('imageModal').classList.add('open')}
-$('zipBtn').onclick=async()=>{if(!templateImage){alert('Primero cargá la plantilla S-89.');return}if(!rows.length){alert('Agregá al menos una asignación.');return}if(!window.JSZip){alert('No se cargó el módulo ZIP. Podés guardar cada PNG por separado.');return}try{const zip=new JSZip();for(const r of rows){zip.file(fileName(r),await blobFromCanvas(renderCanvas(r)))}const blob=await zip.generateAsync({type:'blob'});downloadBlob(blob,'hojas-s89.zip');setStatus('ZIP generado con '+rows.length+' imágenes PNG. En iPhone, buscá el ZIP en Archivos/Descargas y tocá para descomprimirlo.')}catch(e){alert('No se pudo generar el ZIP: '+e.message)}};
+
+function checkReady(){
+  if(!templateImage){alert('Primero elegí la plantilla S-89.');return false}
+  if(!rows.length){alert('No hay asignaciones.');return false}
+  const missing=rows.filter(r=>!r.name).length;
+  return !missing||confirm(missing+' asignación(es) no tienen nombre. ¿Generarlas igual?');
+}
+async function allFiles(){const out=[];for(let i=0;i<rows.length;i++)out.push(new File([await blobFromCanvas(renderCanvas(rows[i]))],fileName(rows[i],i),{type:'image/png'}));return out}
+
+$('shareAllBtn').onclick=async()=>{
+  if(!checkReady())return;
+  try{
+    const files=await allFiles();
+    if(navigator.canShare&&navigator.canShare({files})){await navigator.share({files,title:'Hojas S-89'});return}
+    $('zipBtn').onclick();
+  }catch(e){if(e.name!=='AbortError')alert('No se pudo compartir: '+e.message+'. Probá con “Descargar todas (ZIP)”.')}
+};
+$('zipBtn').onclick=async()=>{
+  if(!checkReady())return;
+  if(!window.JSZip){alert('No se cargó el módulo ZIP. Podés guardar cada PNG por separado.');return}
+  try{const zip=new JSZip();for(const f of await allFiles())zip.file(f.name,f);downloadBlob(await zip.generateAsync({type:'blob'}),'hojas-s89.zip');setStatus('ZIP generado con '+rows.length+' imágenes PNG. En iPhone, buscalo en Archivos › Descargas y tocalo para descomprimirlo.')}
+  catch(e){alert('No se pudo generar el ZIP: '+e.message)}
+};
+
+/* ---------- Inicio ---------- */
+$('year').value=load('year',null)||new Date().getFullYear();$('year').addEventListener('change',()=>store('year',$('year').value));
+$('meetingDay').value=load('meetingDay','');
+renderLayoutTable();
 </script>
 </body></html>
