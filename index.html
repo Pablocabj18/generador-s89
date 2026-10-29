@@ -310,11 +310,10 @@ function renderCanvas(r){
 
 /* ---------- Imágenes, compartir, ZIP ---------- */
 
-// "Juan Pérez - Lectura de la Biblia - 03-11-26.png": la asignación se corta antes de "(3 mins.)" o ":".
+// "Juan Pérez - Intervención 3 - 03-11-26.png"
 function fileName(r,i){
   const clean=s=>s.replace(/[\\/:*?"<>|]+/g,'-').replace(/\s+/g,' ').trim();
-  const title=(r.title||'').split(/[(:]/)[0].trim()||'Asignacion';
-  return (i!=null?pad(i+1)+' ':'')+[r.name||'Participante',title,r.date||'fecha'].map(clean).join(' - ')+'.png';
+  return (i!=null?pad(i+1)+' ':'')+[r.name||'Participante','Intervención '+(r.num||''),r.date||'fecha'].map(s=>clean(String(s))).join(' - ')+'.png';
 }
 function blobFromCanvas(c){return new Promise((resolve,reject)=>c.toBlob(b=>b?resolve(b):reject(Error('No se pudo crear la imagen PNG.')),'image/png'))}
 function downloadBlob(blob,name){const url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download=name;a.style.display='none';document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),30000)}
