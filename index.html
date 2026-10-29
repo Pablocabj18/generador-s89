@@ -310,7 +310,12 @@ function renderCanvas(r){
 
 /* ---------- Imágenes, compartir, ZIP ---------- */
 
-function fileName(r,i){return 'S89_'+(i!=null?pad(i+1)+'_':'')+(r.name||'participante').normalize('NFD').replace(/[̀-ͯ]/g,'').replace(/[^a-z0-9_-]/gi,'_')+'_'+(r.date||'fecha').replace(/[^a-z0-9_-]/gi,'_')+'.png'}
+// "Juan Pérez - Lectura de la Biblia - 03-11-26.png": la asignación se corta antes de "(3 mins.)" o ":".
+function fileName(r,i){
+  const clean=s=>s.replace(/[\\/:*?"<>|]+/g,'-').replace(/\s+/g,' ').trim();
+  const title=(r.title||'').split(/[(:]/)[0].trim()||'Asignacion';
+  return (i!=null?pad(i+1)+' ':'')+[r.name||'Participante',title,r.date||'fecha'].map(clean).join(' - ')+'.png';
+}
 function blobFromCanvas(c){return new Promise((resolve,reject)=>c.toBlob(b=>b?resolve(b):reject(Error('No se pudo crear la imagen PNG.')),'image/png'))}
 function downloadBlob(blob,name){const url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download=name;a.style.display='none';document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),30000)}
 async function shareCurrent(){if(!modalBlob)return;try{const f=new File([modalBlob],modalName,{type:'image/png'});if(navigator.canShare&&navigator.canShare({files:[f]})){await navigator.share({files:[f],title:'Hoja S-89'});return}downloadBlob(modalBlob,modalName)}catch(e){if(e.name!=='AbortError')alert('Mantené presionada la imagen para guardarla en Fotos, o tocá “Abrir imagen aparte”.')}}
