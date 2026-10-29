@@ -318,7 +318,7 @@ function fileName(r,i){
 }
 function blobFromCanvas(c){return new Promise((resolve,reject)=>c.toBlob(b=>b?resolve(b):reject(Error('No se pudo crear la imagen PNG.')),'image/png'))}
 function downloadBlob(blob,name){const url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download=name;a.style.display='none';document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),30000)}
-async function shareCurrent(){if(!modalBlob)return;try{const f=new File([modalBlob],modalName,{type:'image/png'});if(navigator.canShare&&navigator.canShare({files:[f]})){await navigator.share({files:[f],title:'Hoja S-89'});return}downloadBlob(modalBlob,modalName)}catch(e){if(e.name!=='AbortError')alert('Mantené presionada la imagen para guardarla en Fotos, o tocá “Abrir imagen aparte”.')}}
+async function shareCurrent(){if(!modalBlob)return;try{const f=new File([modalBlob],modalName,{type:'image/png'});if(navigator.canShare&&navigator.canShare({files:[f]})){const text=modalName.replace(/\.png$/,'');await navigator.share({files:[f],title:text,text});return}downloadBlob(modalBlob,modalName)}catch(e){if(e.name!=='AbortError')alert('Mantené presionada la imagen para guardarla en Fotos, o tocá “Abrir imagen aparte”.')}}
 $('closeModal').onclick=()=>$('imageModal').classList.remove('open');$('modalShare').onclick=shareCurrent;$('modalDownload').onclick=()=>{if(modalBlob)downloadBlob(modalBlob,modalName)};
 $('modalOpen').onclick=()=>{const w=window.open();if(w){w.document.write('<!doctype html><meta name="viewport" content="width=device-width,initial-scale=1"><title>Hoja S-89</title><body style="margin:0;background:#222;text-align:center"><img style="width:100%;height:auto;max-width:900px" alt="Hoja S-89"></body>');w.document.querySelector('img').src=$('modalImage').src}else alert('El navegador bloqueó la pestaña. Mantené presionada la imagen en esta ventana para guardarla.')};
 
@@ -348,7 +348,7 @@ $('shareAllBtn').onclick=async()=>{
   if(!checkReady())return;
   try{
     const files=await allFiles();
-    if(navigator.canShare&&navigator.canShare({files})){await navigator.share({files,title:'Hojas S-89'});return}
+    if(navigator.canShare&&navigator.canShare({files})){const text=files.map(f=>f.name.replace(/\.png$/,'')).join('\n');await navigator.share({files,title:'Hojas S-89',text});return}
     $('zipBtn').onclick();
   }catch(e){if(e.name!=='AbortError')alert('No se pudo compartir: '+e.message+'. Probá con “Descargar todas (ZIP)”.')}
 };
